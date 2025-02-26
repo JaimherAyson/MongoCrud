@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoCrud.Server", "MongoCrud.Server\MongoCrud.Server.csproj", "{5B3DCFC9-CD8B-45C6-8F52-FE2262AB13AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoCrud.Client", "MongoCrud.Client\MongoCrud.Client.csproj", "{7A9E28D8-1191-4FD1-B197-90E0850AF688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5B3DCFC9-CD8B-45C6-8F52-FE2262AB13AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B3DCFC9-CD8B-45C6-8F52-FE2262AB13AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B3DCFC9-CD8B-45C6-8F52-FE2262AB13AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A9E28D8-1191-4FD1-B197-90E0850AF688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A9E28D8-1191-4FD1-B197-90E0850AF688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A9E28D8-1191-4FD1-B197-90E0850AF688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A9E28D8-1191-4FD1-B197-90E0850AF688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

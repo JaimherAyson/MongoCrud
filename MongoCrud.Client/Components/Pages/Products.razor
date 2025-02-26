@@ -1,0 +1,150 @@
+﻿@page "/products"
+@using MongoCrud.Client.Services
+@using MongoCrud.Client.Models
+@inject ProductService ProductService
+@inject IJSRuntime JS
+
+
+<PageTitle>Products</PageTitle>
+
+<h3>Products</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (products == null || products.Count == 0)
+{
+    <p>No products available.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                    <td>
+                        <button @onclick="() => EditProduct(product)" disabled="@isProcessing">Edit</button>
+                        <button @onclick="() => ConfirmDelete(product.Id)" disabled="@isProcessing">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>@(editMode ? "Edit Product" : "Add Product")</h3>
+    <input type="text" @bind="product.Name" placeholder="Product Name" />
+    <input type="number" @bind="product.Price" placeholder="Price" min="0" />
+
+    <button @onclick="SaveProduct" disabled="@isProcessing">
+        @(editMode ? "Update" : "Create")
+    </button>
+}
+
+@code {
+    private List<Product>? products;
+    private Product product = new();
+    private bool editMode = false;
+    private bool isLoading = true;
+    private bool isProcessing = false; // Prevents double-click actions
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        isLoading = true;
+        try
+        {
+            products = await ProductService.GetProductsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading products: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task SaveProduct()
+    {
+        if (string.IsNullOrWhiteSpace(product.Name) || product.Price <= 0)
+        {
+            Console.WriteLine("Invalid product data.");
+            return;
+        }
+
+        isProcessing = true;
+
+        try
+        {
+            if (editMode)
+                await ProductService.UpdateProductAsync(product.Id, product);
+            else
+                await ProductService.CreateProductAsync(product);
+            
+            ResetForm();
+            await LoadProducts();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving product: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    private void EditProduct(Product p)
+    {
+        product = new Product { Id = p.Id, Name = p.Name, Price = p.Price };
+        editMode = true;
+    }
+
+    private async Task ConfirmDelete(string id)
+    {
+        if (await JS.InvokeAsync<bool>("confirm", "Are you sure you want to delete this product?"))
+        {
+            await DeleteProduct(id);
+        }
+    }
+
+    private async Task DeleteProduct(string id)
+    {
+        isProcessing = true;
+        try
+        {
+            await ProductService.DeleteProductAsync(id);
+            await LoadProducts();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting product: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    private void ResetForm()
+    {
+        product = new Product();
+        editMode = false;
+    }
+}
